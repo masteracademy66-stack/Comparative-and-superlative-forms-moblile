@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Grammar Studio - Mobile 26 Slides</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #FDFBF7;
+      --card-bg: #FFFFFF;
+      --text-dark: #1A1D20;
+      --text-muted: #5A626A;
+      --accent-blue: #2B5B84;
+      --accent-sky: #E8F1F5;
+      --border-color: #E2E8F0;
+      --success-bg: #E6F4EA;
+      --success-text: #137333;
+      --error-bg: #FCE8E6;
+      --error-text: #C5221F;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Playfair Display', Georgia, serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: #111418;
+      color: var(--text-dark);
+      font-family: var(--font-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .studio-container {
+      width: 100%;
+      max-width: 600px;
+      height: 94dvh;
+      background-color: var(--bg-cream);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Top Navigation Toolbar */
+    .toolbar {
+      height: 56px;
+      padding: 0 12px;
+      background: rgba(253, 251, 247, 0.98);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      white-space: nowrap;
+    }
+
+    .controls { 
+      display: flex; 
+      align-items: center; 
+      gap: 5px; 
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .nav-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .slide-select {
+      padding: 6px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.78rem;
+      flex: 1;
+      max-width: 175px;
+    }
+
+    /* Slides Viewport */
+    .slides-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      transform: translateX(15px);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .slide-header {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--accent-sky);
+      padding-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .slide-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--accent-blue);
+    }
+
+    .badge {
+      background: var(--accent-sky);
+      color: var(--accent-blue);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge.practice {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+
+    .content-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .card h3 {
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+    }
+
+    .example-box {
+      background: var(--accent-sky);
+      border-left: 3px solid var(--accent-blue);
+      padding: 6px 8px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 4px;
+    }
+
+    .example-box p.en {
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.85rem;
+    }
+
+    /* Table Styling */
+    .grammar-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+    }
+
+    .grammar-table th {
+      background: var(--accent-sky);
+      color: var(--accent-blue);
+      text-align: left;
+      padding: 4px 6px;
+      font-weight: 700;
+    }
+
+    .grammar-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* MCQ Styling */
+    .mcq-group {
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text-dark);
+      font-size: 0.83rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .option-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 7px 8px;
+      border-radius: 6px;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .option-btn.correct {
+      background: var(--success-bg) !important;
+      color: var(--success-text) !important;
+      border-color: var(--success-text) !important;
+    }
+
+    .option-btn.incorrect {
+      background: var(--error-bg) !important;
+      color: var(--error-text) !important;
+      border-color: var(--error-text) !important;
+    }
+
+    .feedback-msg {
+      margin-top: 3px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.78rem;
+      margin-bottom: 3px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="studio-container" id="studioContainer">
+  <!-- Top Toolbar Navigation -->
+  <div class="toolbar">
+    <div class="brand">✨ STUDIO</div>
+    <div class="controls">
+      <button class="nav-btn" onclick="prevSlide()">❮</button>
+      <select class="slide-select" id="slideSelector" onchange="goToSlide(this.value)">
+        <option value="0">1. Types (Rule)</option>
+        <option value="1">2. Types (Practice)</option>
+        <option value="2">3. Short Adj (Rule)</option>
+        <option value="3">4. Short Adj (Practice)</option>
+        <option value="4">5. Long Adj (Rule)</option>
+        <option value="5">6. Long Adj (Practice)</option>
+        <option value="6">7. Irregular (Rule)</option>
+        <option value="7">8. Irregular (Practice)</option>
+        <option value="8">9. Equality (Rule)</option>
+        <option value="9">10. Equality (Practice)</option>
+        <option value="10">11. Less/Least (Rule)</option>
+        <option value="11">12. Less/Least (Practice)</option>
+        <option value="12">13. Modifiers (Rule)</option>
+        <option value="13">14. Modifiers (Practice)</option>
+        <option value="14">15. After THAN (Rule)</option>
+        <option value="15">16. After THAN (Practice)</option>
+        <option value="16">17. Omission THAN (Rule)</option>
+        <option value="17">18. Omission THAN (Practice)</option>
+        <option value="18">19. Mixed Rules (Rule)</option>
+        <option value="19">20. Mixed Rules (Practice)</option>
+        <option value="20">21. Omit THE (Rule)</option>
+        <option value="21">22. Omit THE (Practice)</option>
+
+        <option value="22">23. IN vs OF (Rule)</option>
+        <option value="23">24. IN vs OF (Practice)</option>
+        <option value="24">25. Final Quiz (Info)</option>
+        <option value="25">26. Final Quiz (Submit)</option>
+      </select>
+      <button class="nav-btn" onclick="nextSlide()">❯</button>
+    </div>
+  </div>
+
+  <div class="slides-viewport" id="viewport">
+    
+    <!-- Slide 1: Rule -->
+    <div class="slide active">
+      <div class="slide-header"><h2>1. Classification</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <h3 style="color:var(--accent-blue);">Short Adjectives (1 Syllable)</h3>
+          <div class="example-box"><p class="en">tall • fast • cheap • big</p></div>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--accent-blue);">Long Adjectives (2+ Syllables)</h3>
+          <div class="example-box"><p class="en">beau-ti-ful • ex-pen-sive • crow-ded</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>1. Classification</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Which adjective is long (2+ syllables)?</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) fast</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) crowded</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+          <div class="mcq-group">
+            <p class="question-text">2. 'Cheap' is classified as ________.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) Short</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) Long</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>2. Short Adjectives</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Comparative (-er than)</h3>
+          <div class="example-box"><p class="en">Ali is tall<strong>er than</strong> Hani.</p></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Superlative (the -est)</h3>
+          <div class="example-box"><p class="en">Ali is <strong>the</strong> tall<strong>est</strong> boy.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>2. Short Adjectives</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Mount Everest is ________ mountain.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) higher</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) the highest</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+          <div class="mcq-group">
+            <p class="question-text">2. Plane is ________ than train.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) faster</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) fast</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>3. Long Adjectives</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Comparative Structure</h3>
+          <div class="example-box"><p class="en">more + adjective + than</p></div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Superlative Structure</h3>
+          <div class="example-box"><p class="en">the most + adjective</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>3. Long Adjectives</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Physics is ________ than history.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) difficult</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) more difficult</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+          <div class="mcq-group">
+            <p class="question-text">2. It is ________ expensive car in town.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) the most</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) more</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>4. Irregular Adj</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="padding: 6px 8px;">
+          <table class="grammar-table">
+            <thead><tr><th>Adj</th><th>Comp</th><th>Superlative</th></tr></thead>
+            <tbody>
+              <tr><td>good</td><td>better</td><td>the best</td></tr>
+              <tr><td>bad</td><td>worse</td><td>the worst</td></tr>
+              <tr><td>far</td><td>further</td><td>the furthest</td></tr>
+              <tr><td>little</td><td>less</td><td>the least</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>4. Irregular Adj</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. My English today is ________ than last year.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) better</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) gooder</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+          <div class="mcq-group">
+            <p class="question-text">2. Yesterday was ________ day of the week.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) worse</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) the worst</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>5. Equality Rules</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Structures</h3>
+          <div class="example-box"><p class="en">as + adj + as</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">not as / so + adj + as</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">the same + noun + as (age/height)</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>5. Equality Rules</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Mona is as ________ as her sister.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) clever</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) cleverer</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+          <div class="mcq-group">
+            <p class="question-text">2. They have the same ________.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) tall</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) height</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>6. Less & Least</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Reduction Structure</h3>
+          <div class="example-box"><p class="en">less + adjective + than</p></div>
+          <div class="example-box" style="margin-top:4px;"><p class="en">the least + adjective</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 12: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>6. Less & Least</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Today is ________ cold than yesterday.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) less</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) least</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 13: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>7. Modifiers</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Scaling Differences</h3>
+          <div class="example-box"><p class="en">Large: much / a lot / far</p></div>
+          <div class="example-box" style="margin-top:4px;"><p class="en">Small: slightly / a bit / a little</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 14: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>7. Modifiers</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Russia is ________ bigger than France.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) much</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) slightly</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 15: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>8. After THAN</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Valid Structures</h3>
+          <div class="example-box"><p class="en">1. Noun (Hani)</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">2. Object Pronoun (me / him)</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">3. Subject + Verb (I am / he is)</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 16: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>8. After THAN</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Omar runs faster than ________.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) he</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) him</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 17: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>9. Omission THAN</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Deleting THAN</h3>
+          <div class="example-box"><p class="en">I'm smart, but my brother is smarter (than me).</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 18: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>9. Omission THAN</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. This phone is fast, but the new model is ________.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) faster</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) faster than</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 19: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>10. Mixed Rules</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Special Patterns</h3>
+          <div class="example-box"><p class="en">The more ..., the fatter ...</p></div>
+          <div class="example-box" style="margin-top:4px;"><p class="en">The taller of the two friends</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 20: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>10. Mixed Rules</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Ali is ________ of the two brothers.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) tallest</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) the taller</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 21: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>11. Omit 'THE'</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>No 'THE' Cases</h3>
+          <div class="example-box"><p class="en">1. Ordinals: first most wanted</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">2. Possessives: my most favorite</p></div>
+          <div class="example-box" style="margin-top:3px;"><p class="en">3. Possessive 's: Egypt's most ambitious</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 22: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>11. Omit 'THE'</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Dr. Zewail was Egypt's ________ scientist.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, false)">A) the most</button>
+              <button class="option-btn" onclick="checkAnswer(this, true)">B) most</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 23: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>12. IN vs OF</h2><span class="badge">Rule</span></div>
+      <div class="content-grid">
+        <div class="card" style="border-left:4px solid var(--accent-blue);">
+          <h3>Prepositions</h3>
+          <div class="example-box"><p class="en">IN + Singular / Place (in the team)</p></div>
+          <div class="example-box" style="margin-top:4px;"><p class="en">OF + Plural / Year (of his friends / of 2025)</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 24: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>12. IN vs OF</h2><span class="badge practice">Practice</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="mcq-group">
+            <p class="question-text">1. Mona is the smartest student ________ her class.</p>
+            <div class="options-grid">
+              <button class="option-btn" onclick="checkAnswer(this, true)">A) in</button>
+              <button class="option-btn" onclick="checkAnswer(this, false)">B) of</button>
+            </div>
+            <div class="feedback-msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 25: Rule -->
+    <div class="slide">
+      <div class="slide-header"><h2>13. Final Quiz</h2><span class="badge">Info</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <p style="font-size: 0.85rem; color: var(--text-dark);">This assessment covers all 12 grammar topics. Enter student info on the next slide to finish.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 26: Practice -->
+    <div class="slide">
+      <div class="slide-header"><h2>13. Final Quiz</h2><span class="badge practice">Submit</span></div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Student Name:</label>
+              <input type="text" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+              <label>Group / Class:</label>
+              <input type="text" placeholder="e.g. Sec 2">
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 10px;">
+            <button class="nav-btn" style="background:var(--accent-blue); color:#FFF; width:100%; padding:10px;" onclick="alert('Assessment Complete!')">Submit Assessment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const selector = document.getElementById('slideSelector');
+
+  function updateSlides() {
+    slides.forEach((slide, idx) => {
+      slide.classList.toggle('active', idx === currentSlide);
+    });
+    if(selector) selector.value = currentSlide;
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) { currentSlide--; updateSlides(); }
+  }
+
+  function goToSlide(index) {
+    currentSlide = parseInt(index);
+    updateSlides();
+  }
+
+  function checkAnswer(button, isCorrect) {
+    const parentGrid = button.parentElement;
+    const buttons = parentGrid.querySelectorAll('.option-btn');
+    const feedback = parentGrid.parentElement.querySelector('.feedback-msg');
+
+    buttons.forEach(btn => {
+      btn.style.pointerEvents = 'none';
+      if(btn === button) {
+        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+      }
+    });
+
+    feedback.style.display = 'block';
+    if(isCorrect) {
+      feedback.textContent = "✓ Correct!";
+      feedback.style.color = "var(--success-text)";
+    } else {
+      feedback.textContent = "✗ Incorrect.";
+      feedback.style.color = "var(--error-text)";
+    }
+  }
+
+  // Swipe Gestures for Mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const viewport = document.getElementById('viewport');
+
+  viewport.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+
+  viewport.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, {passive: true});
+
+  function handleSwipe() {
+    const threshold = 40;
+    if (touchEndX < touchStartX - threshold) {
+      nextSlide(); // Swipe Left -> Next
+    }
+    if (touchEndX > touchStartX + threshold) {
+      prevSlide(); // Swipe Right -> Prev
+    }
+  }
+</script>
+</body>
+</html>
